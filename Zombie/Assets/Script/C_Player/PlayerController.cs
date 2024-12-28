@@ -7,25 +7,29 @@ using UnityEngine.EventSystems;
 using Unity.IO;
 using UnityEngine.WSA;
 using UnityEngine.UIElements;
-
-
+using TreeEditor;
+using Unity.VisualScripting;
 
 public class PlayerM : MonoBehaviour
 {
-
+    [Header("이동")]
     [SerializeField]
     private float JumpForce = 0.0f;
     [SerializeField]
     private float MoveSpeed = 0.0f;
     [SerializeField]
     private float MouseSpeed = 0.0f;
-
+    [SerializeField]
+    private bool isground = false;
+    
 
     [Header("회전")]
     [SerializeField]
     private float XRoatate = 0.0f;
     [SerializeField]
     private float YRoatate = 0.0f;
+
+    private Vector3 dir;
 
 
 
@@ -35,62 +39,64 @@ public class PlayerM : MonoBehaviour
     private Rigidbody PlayerRigd;
 
 
+    private LayerMask layer;
 
     // Start is called before the first frame update
     void Start()
     {
         PlayerRigd = GetComponent<Rigidbody>(); // 물리 관련 컴포넌트 
         PlayerRigd.freezeRotation = true; //회전 고정
-        UnityEngine.Cursor.lockState = CursorLockMode.Locked;  //화면 고정
+        UnityEngine.Cursor.lockState = CursorLockMode.Locked;  //마우스 고정
         UnityEngine.Cursor.visible = false; //마우스 안보이게 하기 
         MainCam = this.GetComponentInChildren<Camera>();
-    }
-
-    private void OnTriggerStay(Collider other)
-    {
-        if (other.GetComponent<Collider>().tag == "broad")
-        {
-            PlayerRigd.useGravity = false;
-        }
-    }
-
-    private void OnTriggerExit(Collider other)
-    {
-        if (other.GetComponent<Collider>().tag == "broad")
-        {
-            //중력 작용 및 해제
-       //     PlayerRigd.useGravity = true;
-        }
 
     }
+
 
 
     // Update is called once per frame
     void Update()
     {
 
-        PlayerMove(PlayerRigd); //움직임
+        isground = Physics.Raycast(transform.position, Vector3.down, 1.5f);
+        PlayerMove(); //움직임
         Rotate();
+        Jump();
 
         // Debug.Log(Input.mousePosition); //마우스 움직임 표시
     }
 
-    
 
 
-    private void PlayerMove(Rigidbody _PlayerRigd)
+
+    private void PlayerMove()
     {
-        float _moveDirX = Input.GetAxisRaw("Horizontal");
-        float _moveDirZ = Input.GetAxisRaw("Vertical");
+        dir.x = Input.GetAxisRaw("Horizontal");
+        dir.z = Input.GetAxisRaw("Vertical");
 
+        Vector3 movedir = transform.forward * dir.z + transform.right * dir.x;
 
-        Vector3 _moveHorizontal = transform.right * _moveDirX;
-        Vector3 _moveVertical = transform.forward * _moveDirZ;
-        Vector3 _velocity = (_moveHorizontal + _moveVertical).normalized * MoveSpeed ; //움직일 방향 
-
-        PlayerRigd.MovePosition(transform.position + _velocity * Time.deltaTime);
+        transform.position += (movedir.normalized * MoveSpeed * Time.deltaTime);
 
     }
+
+    private void Jump()
+    {
+       
+        if (isground == true && Input.GetKeyDown(KeyCode.Space))
+        { 
+        PlayerRigd.AddForce(Vector3.up * JumpForce, ForceMode.Impulse);
+        }
+    }
+
+    private void GroundCheck()
+    {
+       
+        
+
+
+    }
+
 
     private void Rotate()
     {
@@ -100,6 +106,8 @@ public class PlayerM : MonoBehaviour
         XRoatate -= verticalRotat;
         XRoatate = Mathf.Clamp(XRoatate, -90, 90); //범위 제한 . 위 아래 
         MainCam.transform.rotation = Quaternion.Euler(XRoatate, YRoatate, 0);
-        transform.rotation = Quaternion.Euler(XRoatate, YRoatate, 0); //이것도 움직여야 위에있는 목표물을 볼수 있음 같이 변환 안해주면 위에 절때 못쏜다.
+        transform.rotation = Quaternion.Euler(0, YRoatate, 0); //이것도 움직여야 위에있는 목표물을 볼수 있음 같이 변환 안해주면 위에 절때 못쏜다.
+        //수정 transform을 바꿔주면 축이 움직여서 위를 보고 앞으로 전진하면 공중부양이 된다.  그래서 막아야한다. 
+
     }
 }
