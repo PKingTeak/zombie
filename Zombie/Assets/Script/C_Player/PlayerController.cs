@@ -29,22 +29,40 @@ public class PlayerM : MonoBehaviour
     [SerializeField]
     private float YRoatate = 0.0f;
 
-    private Vector3 dir;
+    [Header("오디오")]
+    [SerializeField]
+    private AudioClip Walk_Audio;
 
 
+    private Vector3 dir; //방향
+
+    private WeaponAssaultRifle weapon; //무기 제어 
+   
+   
 
     [SerializeField]
     private Camera MainCam; //카메라 회전도 플레이어와 동일하게 적용할것
+    
+    private Rigidbody PlayerRigd; // 플레이어 움직임 관련 (물리)
+    private PlayerAnimator animator; //애니메이션
+    private AudioSource audiosource;
 
-    private Rigidbody PlayerRigd;
+    private LayerMask layer; //Ray관련 처리 layer로 구분지어 처리할듯
+
+    private void Awake()
+    {
+        PlayerRigd = GetComponent<Rigidbody>();
+        weapon = GetComponentInChildren<WeaponAssaultRifle>();
+        animator = GetComponentInChildren<PlayerAnimator>();
+        audiosource = GetComponent<AudioSource>();
+       
+    }
 
 
-    private LayerMask layer;
 
     // Start is called before the first frame update
     void Start()
     {
-        PlayerRigd = GetComponent<Rigidbody>(); // 물리 관련 컴포넌트 
         PlayerRigd.freezeRotation = true; //회전 고정
         UnityEngine.Cursor.lockState = CursorLockMode.Locked;  //마우스 고정
         UnityEngine.Cursor.visible = false; //마우스 안보이게 하기 
@@ -59,10 +77,11 @@ public class PlayerM : MonoBehaviour
     {
 
         isground = Physics.Raycast(transform.position, Vector3.down, 1.5f);
-        PlayerMove(); //움직임
         Rotate();
+        PlayerMove(); //움직임
         Jump();
 
+        UpdateWeaponAction();
         // Debug.Log(Input.mousePosition); //마우스 움직임 표시
     }
 
@@ -78,6 +97,31 @@ public class PlayerM : MonoBehaviour
 
         transform.position += (movedir.normalized * MoveSpeed * Time.deltaTime);
 
+        if (dir.x != 0 || dir.z != 0)
+        {
+         
+            animator.MovementAnimation = 1;
+
+
+        }
+        else
+        {
+            animator.MovementAnimation = 0;
+
+            if (audiosource.isPlaying == true)
+            {
+                audiosource.Stop(); //만약 오디오가 켜져있을 경우 끄는거
+            }
+            else
+            {
+                return;
+            }
+        
+        }
+
+
+
+
     }
 
     private void Jump()
@@ -89,13 +133,21 @@ public class PlayerM : MonoBehaviour
         }
     }
 
-    private void GroundCheck()
+
+    private void UpdateWeaponAction()
     {
-       
-        
-
-
+        if (Input.GetMouseButtonDown(0))
+        {
+            weapon.StartWeaponAciton();
+        }
+        else if (Input.GetMouseButtonUp(0))
+        {
+            weapon.StopWeaponAction();
+        }
+    
     }
+
+
 
 
     private void Rotate()
