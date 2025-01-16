@@ -101,7 +101,7 @@ public class PlayerM : MonoBehaviour
         {
          
             animator.MovementAnimation = 1;
-
+            
 
         }
         else
