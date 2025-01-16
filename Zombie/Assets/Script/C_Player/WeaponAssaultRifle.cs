@@ -5,7 +5,13 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.Networking;
 
-
+[System.Serializable]
+public class AmmoEvent : UnityEngine.Events.UnityEvent<int, int> { };
+//설명 
+/*
+ * Unity Event클래스의 일반화 정의에 따라 호출할 수 있는 이벤트 메소드들의 매개변수가 결정된다. 
+ * C++ 로 따지면 템플릿 클래스를 정의하는것과 같다. 
+ */ 
 
 
 public class WeaponAssaultRifle : MonoBehaviour
@@ -45,6 +51,8 @@ public class WeaponAssaultRifle : MonoBehaviour
     {
         audioSource = GetComponent<AudioSource>();
         playerAnimator = GetComponentInParent<PlayerAnimator>();
+
+        weaponSetting.currentAmmo = weaponSetting.maxAmmo; //처음엔 풀충전 
     }
 
     public void StartWeaponAciton(int type = 0)
@@ -87,13 +95,20 @@ public class WeaponAssaultRifle : MonoBehaviour
     { 
         if(Time.time - LastAttackTime > weaponSetting.attackRate)
         {
+            if (weaponSetting.currentAmmo <= 0)
+            {
+                return; //  탄약이 없으면 공격을 못한다. 
+            }
             //뛰고있을때 공격 가능하게 할까? 말까? 일단 그냥 하는걸로
             //뛸때 못쏘는걸로 제어하려면 movement를 state를 나눠서 움직일때 return 하는 방식을 사용해야함 
             LastAttackTime = Time.time;
             playerAnimator.AnimationPlay("Fire", -1, 0);
             StartCoroutine("OnMuzzleFlashEffect"); // 이펙트 코루틴으로 호출할 것이다. 
             PlaySound(audioClipFire);
+            weaponSetting.currentAmmo--; //탄약수 한발씩 내려감 
 
+
+            
         }
     
     }
