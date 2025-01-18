@@ -356,6 +356,8 @@
 "Assets/Script/C_Player/PlayerAnimator.cs"
 "Assets/Script/C_Player/PlayerController.cs"
 "Assets/Script/C_Player/WeaponAssaultRifle.cs"
+"Assets/Script/Memory/MemoryPool.cs"
+"Assets/Script/UI/PlayerHUD.cs"
 -langversion:9.0
 /deterministic
 /optimize+

@@ -7,6 +7,7 @@ using UnityEngine.Networking;
 
 [System.Serializable]
 public class AmmoEvent : UnityEngine.Events.UnityEvent<int, int> { };
+
 //설명 
 /*
  * Unity Event클래스의 일반화 정의에 따라 호출할 수 있는 이벤트 메소드들의 매개변수가 결정된다. 
@@ -16,6 +17,9 @@ public class AmmoEvent : UnityEngine.Events.UnityEvent<int, int> { };
 
 public class WeaponAssaultRifle : MonoBehaviour
 {
+    [HideInInspector] //가릴거다.
+    public AmmoEvent onAmmoEvent;
+
     [Header("Fire Effect")]
     [SerializeField]
     private GameObject muzzleFlashEffect;
@@ -36,6 +40,7 @@ public class WeaponAssaultRifle : MonoBehaviour
 
     private float LastAttackTime = 0.0f; // 마지막 발사 시간 채크
 
+    public WeaponName weaponName => weaponSetting.weaPonName; // 외부에서 필요한 정보를 열람하기 위해 정의한 Get Property's
 
 
     private void OnEnable()
@@ -43,6 +48,8 @@ public class WeaponAssaultRifle : MonoBehaviour
         PlaySound(audioClipTakeOutWeapon);
         muzzleFlashEffect.SetActive(false); // 일단 꺼두자 
         
+        // 무기가 활성화 되면 그 탄약 정보를 갱신한다. 
+        onAmmoEvent.Invoke(weaponSetting.currentAmmo, weaponSetting.maxAmmo);
     }
 
 
@@ -105,7 +112,9 @@ public class WeaponAssaultRifle : MonoBehaviour
             playerAnimator.AnimationPlay("Fire", -1, 0);
             StartCoroutine("OnMuzzleFlashEffect"); // 이펙트 코루틴으로 호출할 것이다. 
             PlaySound(audioClipFire);
+
             weaponSetting.currentAmmo--; //탄약수 한발씩 내려감 
+            onAmmoEvent.Invoke(weaponSetting.currentAmmo, weaponSetting.maxAmmo); //공격시 탄약 UI업데이트 
 
 
             

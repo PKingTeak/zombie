@@ -9,7 +9,6 @@ public class MemoryPool : MonoBehaviour
     {
 
         public bool isActive;
-
         public GameObject gameobject; 
 
     }
