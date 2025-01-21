@@ -12,6 +12,10 @@ using Unity.VisualScripting;
 
 public class PlayerM : MonoBehaviour
 {
+  
+
+
+
     [Header("¿Ãµø")]
     [SerializeField]
     private float JumpForce = 0.0f;

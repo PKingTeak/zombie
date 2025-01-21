@@ -17,6 +17,11 @@ public class AmmoEvent : UnityEngine.Events.UnityEvent<int, int> { };
 
 public class WeaponAssaultRifle : MonoBehaviour
 {
+    [Header("Spawn Point")]
+    [SerializeField]
+    private Transform casingSpawnPoint;
+
+
     [HideInInspector] //가릴거다.
     public AmmoEvent onAmmoEvent;
 
@@ -32,7 +37,7 @@ public class WeaponAssaultRifle : MonoBehaviour
 
     private AudioSource audioSource;
     private PlayerAnimator playerAnimator; // 플레이어 애니메이션 재생 할 것
-
+    private CasingMemoryPool casingMemoryPool;
 
     [Header("WeaponSetting")]
     [SerializeField]
@@ -58,6 +63,7 @@ public class WeaponAssaultRifle : MonoBehaviour
     {
         audioSource = GetComponent<AudioSource>();
         playerAnimator = GetComponentInParent<PlayerAnimator>();
+        casingMemoryPool = GetComponent<CasingMemoryPool>(); 
 
         weaponSetting.currentAmmo = weaponSetting.maxAmmo; //처음엔 풀충전 
     }
@@ -112,6 +118,7 @@ public class WeaponAssaultRifle : MonoBehaviour
             playerAnimator.AnimationPlay("Fire", -1, 0);
             StartCoroutine("OnMuzzleFlashEffect"); // 이펙트 코루틴으로 호출할 것이다. 
             PlaySound(audioClipFire);
+            casingMemoryPool.SpawnCasing(casingSpawnPoint.position, transform.right); //오른쪽으로 튀어나감
 
             weaponSetting.currentAmmo--; //탄약수 한발씩 내려감 
             onAmmoEvent.Invoke(weaponSetting.currentAmmo, weaponSetting.maxAmmo); //공격시 탄약 UI업데이트 

@@ -118,6 +118,7 @@ GameObject:
   - component: {fileID: 7199838184373772582}
   - component: {fileID: 1322772673630890475}
   - component: {fileID: 3942673360513833513}
+  - component: {fileID: 784054011421158783}
   m_Layer: 0
   m_Name: BulletRifleCasing
   m_TagString: Untagged
@@ -288,6 +289,26 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &784054011421158783
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7116198208219319608}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a57f9ce3a6d6db4db176e5e879e88ba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  deactiveTime: 5
+  casingSpin: 1
+  audioClips:
+  - {fileID: 8300000, guid: a88a0411f0502ea4fb7d3f01ebb2f1bc, type: 3}
+  - {fileID: 8300000, guid: c67bc703f7778c34dacd0ebfdc8c807f, type: 3}
+  - {fileID: 8300000, guid: a64f8d2f43c771846a3887a86bd710a8, type: 3}
+  - {fileID: 8300000, guid: fe5f055fa12f56047a02a7fb62070132, type: 3}
+  - {fileID: 8300000, guid: 0b042f4590b316648be6efa0f100c861, type: 3}
 --- !u!1 &8589830997703625076
 GameObject:
   m_ObjectHideFlags: 0
